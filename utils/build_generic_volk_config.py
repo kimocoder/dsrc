@@ -21,14 +21,12 @@
 from __future__ import print_function
 import sys
 
-if (len(sys.argv) - 1) != 2:
-    print('Usage: ' + sys.argv[0] + ' source_volk_config dest_volk_config')
+if len(sys.argv) != 3:
+    print(f'Usage: {sys.argv[0]} source_volk_config dest_volk_config')
     sys.exit(1)
 
-f = open(sys.argv[1], "r")
-lines = f.readlines()
-f.close()
-
+with open(sys.argv[1], "r") as f:
+    lines = f.readlines()
 for i in range(len(lines)):
     line = lines[i]
     if line.startswith("#"):
@@ -36,6 +34,5 @@ for i in range(len(lines)):
     fields = line.split(' ')
     lines[i] = fields[0] + ' generic generic\n'  # I needed to replicate 'generic' twice to make it work.
 
-f = open(sys.argv[2], "w")
-f.write("".join(lines))
-f.close()
+with open(sys.argv[2], "w") as f:
+    f.write("".join(lines))

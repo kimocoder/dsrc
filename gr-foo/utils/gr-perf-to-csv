@@ -40,7 +40,7 @@ class MyApp(object):
         GNURadioControlPortClient(args, 'thrift', self.run)
 
     def run(self, client):
-        input_name = lambda x: x+"::avg input % full"
+        input_name = lambda x: f"{x}::avg input % full"
 
         tmplist = []
         knobs = client.getKnobs([])
@@ -48,10 +48,10 @@ class MyApp(object):
             propname = k.split("::")
             blockname = propname[0]
             keyname = propname[1]
-            if(blockname not in tmplist):
-                # only take gr_blocks (no hier_block2)
-                if(knobs.has_key(input_name(blockname))):
-                    tmplist.append(blockname)
+            if (blockname not in tmplist) and (
+                knobs.has_key(input_name(blockname))
+            ):
+                tmplist.append(blockname)
 
         blocks = tmplist
         blocks.sort()
@@ -59,14 +59,14 @@ class MyApp(object):
         # print csv header
         print(",".join(blocks))
 
-        knobs = map(lambda x: client.Knob("%s::reset_perf_counters" % x), blocks)
+        knobs = map(lambda x: client.Knob(f"{x}::reset_perf_counters"), blocks)
         client.setKnobs(knobs)
 
         # let the flow graph run for some time
         time.sleep(60)
 
         ## get work time for all blocks
-        kl = map(lambda x: "%s::total work time" % x, blocks)
+        kl = map(lambda x: f"{x}::total work time", blocks)
         wrk_knobs = client.getKnobs(kl)
 
         work_times = dict(zip(
